@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.24)
+project(Physics_Engine)
+
+set(CMAKE_CXX_STANDARD 17)
+
+# Find dependencies
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+
+
+set(SOURCES
+        main.cpp
+        Application.cpp
+        Application.h
+        renderer/Shader.cpp
+        renderer/Shader.h
+)
+
+
+include_directories(${CMAKE_SOURCE_DIR}/engine)
+include_directories(${CMAKE_SOURCE_DIR}/renderer)
+
+
+add_executable(Physics_Engine
+            ${SOURCES}
+        Application.cpp
+        Application.h
+        )
+target_link_libraries(Physics_Engine
+        glad::glad
+        glfw
+        glm::glm
+        Freetype::Freetype
+        imgui::imgui
+)
