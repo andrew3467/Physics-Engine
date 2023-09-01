@@ -17,11 +17,19 @@ public:
     Shader(const char* filePath);
 
 
+    void bind() const;
+    void unbind() const;
+
+
 private:
     static unsigned int createShaderProgram(const char* path);
     //Vert Shader: Index 0  Frag Shader: Index 1
     static std::vector<unsigned int> parseShader(const char* path);
     static unsigned int createShader(const char* src, unsigned int type);
+
+
+public:
+    //Uniforms
 };
 
 

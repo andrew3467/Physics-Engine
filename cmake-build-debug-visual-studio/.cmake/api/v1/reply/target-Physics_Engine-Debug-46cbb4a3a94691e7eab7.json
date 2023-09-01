@@ -31,7 +31,7 @@
 			{
 				"command" : 1,
 				"file" : 1,
-				"line" : 26,
+				"line" : 27,
 				"parent" : 0
 			},
 			{
@@ -43,13 +43,19 @@
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 31,
+				"line" : 32,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 1,
 				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 24,
 				"parent" : 0
 			}
 		]
@@ -75,6 +81,10 @@
 				{
 					"backtrace" : 4,
 					"path" : "C:/Users/apgra/OneDrive/Desktop/Projects/OpenGL/Physics-Engine/engine"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/Users/apgra/OneDrive/Desktop/Projects/OpenGL/Physics-Engine/renderer"
 				},
 				{
 					"backtrace" : 3,

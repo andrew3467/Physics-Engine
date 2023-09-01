@@ -4,8 +4,21 @@
 
 #include <glad/glad.h>
 #include "Application.h"
+#include "renderer/Shader.h"
 
 #include <stdexcept>
+
+float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f
+};
+
+unsigned int indices[] = {
+        0, 1, 2
+};
+
+unsigned int VAO, VBO, EBO;
 
 Application::Application(const char *title, int width, int height) : m_Title(title), m_Width(width), m_Height(height) {
     setupWindow();
@@ -33,6 +46,8 @@ void Application::setupWindow() {
 }
 
 void Application::Run() {
+    Shader shader("../shaders/solid_unlit.glsl");
+
 
     while(!glfwWindowShouldClose(m_Window)){
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);

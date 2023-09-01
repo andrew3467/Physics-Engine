@@ -1,3 +1,0 @@
-C:/Users/apgra/OneDrive/Desktop/Projects/OpenGL/Physics-Engine/cmake-build-debug/CMakeFiles/Physics_Engine.dir
-C:/Users/apgra/OneDrive/Desktop/Projects/OpenGL/Physics-Engine/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/apgra/OneDrive/Desktop/Projects/OpenGL/Physics-Engine/cmake-build-debug/CMakeFiles/rebuild_cache.dir
