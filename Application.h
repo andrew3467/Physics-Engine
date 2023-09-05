@@ -8,6 +8,8 @@
 #include <glfw/glfw3.h>
 #include <memory>
 #include "Camera.h"
+#include "Shader.h"
+#include "ParticleDrawer.h"
 
 
 class Application {
@@ -16,17 +18,20 @@ private:
     int m_Width, m_Height;
     const char* m_Title;
 
+    std::unique_ptr<ParticleDrawer> particleDrawer;
+
 
 public:
     Application(const char* title, int width = 1280, int height = 720);
 
     void Run();
 
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
-
 private:
     void setupWindow();
+
+    void processInput(GLFWwindow* window);
+
+    void onImGUIRender();
 };
 
 

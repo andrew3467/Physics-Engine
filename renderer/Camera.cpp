@@ -16,5 +16,8 @@ void Camera::move(CameraMoveDir moveDir, float deltaTime) {
         case Left:
             camPos -= glm::normalize(glm::cross(camFront, camUp)) * camSpeed * deltaTime;
             break;
+        case Back:
+            camPos -= camSpeed * camFront * deltaTime;
+            break;
     }
 }

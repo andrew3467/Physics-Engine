@@ -22,15 +22,24 @@ set(SOURCES
         renderer/Camera.h
 )
 
+set(IMGUI_LIBS
+        external/ImGui/imgui_impl_glfw.cpp
+        external/ImGui/imgui_impl_glfw.h
+        external/ImGui/imgui_impl_opengl3.cpp
+        external/ImGui/imgui_impl_opengl3.h
+        external/ImGui/imgui_impl_opengl3_loader.h
+        renderer/ParticleDrawer.cpp
+        renderer/ParticleDrawer.h
+)
+
 
 include_directories(${CMAKE_SOURCE_DIR}/engine)
 include_directories(${CMAKE_SOURCE_DIR}/renderer)
-
+include_directories(${CMAKE_SOURCE_DIR}/external/ImGui)
 
 add_executable(Physics_Engine
-            ${SOURCES}
-        Application.cpp
-        Application.h
+        ${SOURCES}
+        ${IMGUI_LIBS}
         )
 target_link_libraries(Physics_Engine
         glad::glad

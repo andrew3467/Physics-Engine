@@ -12,7 +12,8 @@
 
 enum CameraMoveDir{
     Right = 0,
-    Left = 1
+    Left = 1,
+    Back = 2
 };
 
 class Camera {
@@ -20,7 +21,7 @@ private:
     int windowWidth;
     int windowHeight;
 
-    float camSpeed = 1.0f;
+    float camSpeed = 10.0;
 
     glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 camFront = glm::vec3(0.0f, 0.0f, -1.0f);
