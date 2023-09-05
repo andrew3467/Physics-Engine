@@ -21,9 +21,6 @@ std::unique_ptr<Camera> camera;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-float circleRadius = 2.0f;
-int circleResolution = 2;
-
 glm::vec3 color = glm::vec3(1.0f);
 
 Application::Application(const char *title, int width, int height) : m_Title(title), m_Width(width), m_Height(height) {
@@ -79,8 +76,9 @@ void Application::Run() {
 
         processInput(m_Window);
 
+
         //Render scene
-        particleDrawer->drawCircle(circleRadius, circleResolution, camera->viewProjection());
+        particleDrawer->drawParticles(camera->viewProjection());
 
 
         //Draw ImGui Windows
@@ -114,8 +112,21 @@ void Application::Run() {
 
 
 void Application::onImGUIRender() {
-    ImGui::SliderFloat("Circle Radius", &circleRadius, 1.0f, 10.0f);
-    ImGui::SliderInt("Circle Resolution", &circleResolution, 1.0f, 100.0f);
+    if(ImGui::Button("Clear particles")){
+        particleDrawer->clear();
+    }
+
+    if(ImGui::CollapsingHeader("Manual Particle Config")){
+        ImGui::Indent();
+        if (ImGui::Button("Create Particle")) {
+            particleDrawer->createParticle();
+        }
+
+        particleDrawer->ImGuiConfigWindow();
+    }
+
+
+
 }
 
 void Application::processInput(GLFWwindow* window) {
