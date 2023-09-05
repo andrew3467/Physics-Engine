@@ -17,6 +17,9 @@ set(SOURCES
         Application.h
         renderer/Shader.cpp
         renderer/Shader.h
+        renderer/Primitives.h
+        renderer/Camera.cpp
+        renderer/Camera.h
 )
 
 

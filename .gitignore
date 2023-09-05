@@ -32,4 +32,5 @@
 *.app
 
 # Folders
-./cmake-build-debug-visual-studio/*
+cmake-build-debug-visual-studio/*
+cmake-build-debug/*

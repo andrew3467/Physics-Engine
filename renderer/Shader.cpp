@@ -12,6 +12,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "glm/gtc/type_ptr.hpp"
+
 Shader::Shader(const char *filePath) {
     m_Handle = createShaderProgram(filePath);
 }
@@ -92,4 +94,59 @@ void Shader::bind() const {
 
 void Shader::unbind() const {
     glUseProgram(0);
+}
+
+
+
+int Shader::getUniformLocation(const std::string &name) const {
+    if(m_UniformCache.find(name) != m_UniformCache.end()){
+        return m_UniformCache[name];
+    }
+
+    int location = glGetUniformLocation(m_Handle, name.c_str());
+    m_UniformCache[name] = location;
+
+    return location;
+}
+
+
+void Shader::setInt(const std::string &name, int v) {
+    glUniform1i(getUniformLocation(name), v);
+}
+
+void Shader::setFloat(const std::string &name, float v) {
+    glUniform1f(getUniformLocation(name), v);
+}
+
+void Shader::setVec2(const std::string &name, glm::vec2 v) {
+    glUniform2f(getUniformLocation(name), v.x, v.y);
+}
+
+void Shader::setVec2(const std::string &name, float x, float y) {
+    glUniform2f(getUniformLocation(name), x, y);
+ }
+
+void Shader::setVec3(const std::string &name, glm::vec3 v) {
+    glUniform3f(getUniformLocation(name), v.x, v.y, v.z);
+}
+
+void Shader::setVec3(const std::string &name, float x, float y, float z) {
+    glUniform3f(getUniformLocation(name), x, y, z);
+}
+
+void Shader::setVec3(const std::string &name, float v) {
+    glUniform3f(getUniformLocation(name), v, v, v);
+}
+
+void Shader::setVec4(const std::string& name, glm::vec4 v) {
+    glUniform4f(getUniformLocation(name), v.x, v.y, v.z, v.w);
+}
+
+void Shader::setVec4(const std::string &name, float x, float y, float z, float w) {
+    glUniform4f(getUniformLocation(name), x, y, z, w);
+}
+
+
+void Shader::setMat4(const std::string &name, glm::mat4 v) {
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(v));
 }

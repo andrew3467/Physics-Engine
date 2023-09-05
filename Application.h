@@ -6,6 +6,8 @@
 #define PHYSICS_ENGINE_APPLICATION_H
 
 #include <glfw/glfw3.h>
+#include <memory>
+#include "Camera.h"
 
 
 class Application {
@@ -19,6 +21,8 @@ public:
     Application(const char* title, int width = 1280, int height = 720);
 
     void Run();
+
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
 private:
