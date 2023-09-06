@@ -48,7 +48,17 @@ public:
         ParticleDrawer::getInstance()->addParticle(rb);
     }
 
-    void createBoxParticle();
+    void createBoxParticle(){
+        RigidBody rb = {
+                {0.0f, 0.0f},
+                {0.0f, 0.0f},
+                0.0f,
+                0.0f,
+                {0.0f, 0.0f},
+                0.0f
+        };
+        m_BoxParticles.emplace_back(1, 1, 1, rb);
+        ParticleDrawer::getInstance()->addParticle(rb);    }
 };
 
 

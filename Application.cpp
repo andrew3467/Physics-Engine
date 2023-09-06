@@ -53,6 +53,12 @@ void Application::Run() {
 
     camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f), m_Width, m_Height);
 
+    //GLFW Callbacks
+    glfwSetKeyCallback(m_Window, key_callback);
+    glfwSetMouseButtonCallback(m_Window, mouse_button_callback);
+
+
+
     //Setup IMGUI
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -73,8 +79,9 @@ void Application::Run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
 
-        processInput(m_Window);
 
+        //Update Particles
+        World::getInstance()->update(deltaTime);
 
         //Render scene
         ParticleDrawer::getInstance()->drawParticles(camera->viewProjection());
@@ -129,7 +136,7 @@ void Application::onImGUIRender() {
             if(ImGui::CollapsingHeader(("Particle #" + std::to_string(i)).c_str())){
                 ImGui::Indent();
                 ImGui::SliderFloat2("position", &boxParticles[i].rigidBody.position.x, -10.0f, 10.0f);
-                ImGui::SliderFloat2("InitialVelocity", &boxParticles[i].rigidBody.linearVelocity.x, -2.0f, 2.0f);
+                ImGui::SliderFloat2("Velocity", &boxParticles[i].rigidBody.linearVelocity.x, -2.0f, 2.0f);
             }
         }
     }
@@ -147,40 +154,6 @@ void Application::onImGUIRender() {
 
 
 }
-
-void Application::processInput(GLFWwindow* window) {
-
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE)){
-        glfwSetWindowShouldClose(window, true);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_A)){
-        color -= glm::vec3(1.0f, 1.0f, 0.0f);
-        camera->move(Left, deltaTime);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_D)){
-        color += glm::vec3(1.0f, 0.0f, 1.0f);
-        camera->move(Right, deltaTime);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_S)){
-        camera->move(Down, deltaTime);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_W)){
-        camera->move(Up, deltaTime);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)){
-        camera->move(Back, deltaTime);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)){
-        camera->move(Forward, deltaTime);
-    }
-}
-
 void Application::CreateLine(LineConfig config) {
     for(int i = -config.length / 2; i < config.length / 2; i++){
         glm::vec2 position = {i + config.pos.x, config.pos.y};;
@@ -199,5 +172,77 @@ void Application::CreateLine(LineConfig config) {
         };
 
         World::getInstance()->createBoxParticle(1.0f, 1.0f, 1.0f, rb);
+    }
+}
+
+glm::vec2 screenSpaceToWorldSpace(glm::vec2 screenCoords, glm::mat4 viewProj, glm::vec2 windowSize){
+    glm::mat4 invViewProj = glm::mat4(1.0f) / viewProj;
+    glm::vec4 In = {
+            2.0f * (screenCoords.x / windowSize.x) - 1.0f,
+            1.0f - (2.0f * screenCoords.y / windowSize.y),
+            0.0f,
+            1.0f
+    };
+
+    auto pos = In * invViewProj;
+
+    pos.w = 1 / pos.w;
+
+    pos.x *= pos.w;
+    pos.y *= pos.w;
+    pos.z *= pos.w;
+
+    return pos;
+}
+
+
+
+//Callbacks
+void Application::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    if (key == GLFW_KEY_A  && action == GLFW_PRESS){
+        color -= glm::vec3(1.0f, 1.0f, 0.0f);
+        camera->move(Left, deltaTime);
+    }
+
+    if (key == GLFW_KEY_D  && action == GLFW_PRESS){
+        color += glm::vec3(1.0f, 0.0f, 1.0f);
+        camera->move(Right, deltaTime);
+    }
+
+    if (key == GLFW_KEY_S && action == GLFW_PRESS){
+        camera->move(Down, deltaTime);
+    }
+
+    if (key == GLFW_KEY_W  && action == GLFW_PRESS){
+        camera->move(Up, deltaTime);
+    }
+
+    if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS){
+        camera->move(Back, deltaTime);
+    }
+
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS){
+        camera->move(Forward, deltaTime);
+    }
+}
+
+void Application::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        double xpos, ypos;
+        //getting cursor position
+        glfwGetCursorPos(window, &xpos, &ypos);
+        glm::vec2 worldCoord = screenSpaceToWorldSpace({xpos, ypos}, camera->viewProjection(), {1280, 720});
+
+        RigidBody rb;
+        rb.position.x = worldCoord.x;
+        rb.position.y = worldCoord.y;
+
+        World::getInstance()->createBoxParticle(1, 1, 1, rb);
     }
 }

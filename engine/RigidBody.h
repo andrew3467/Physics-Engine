@@ -7,13 +7,13 @@
 
 #include <glm/glm.hpp>
 
-typedef struct RigidBody {
-    glm::vec2 position;
-    glm::vec2 linearVelocity;
-    float angle;
-    float angularVelocity;
-    glm::vec2 force;
-    float torque;
-} RigidBody;
+struct RigidBody {
+    glm::vec2 position = {0.0f, 0.0f};
+    glm::vec2 linearVelocity = {0.0f, 0.0f};
+    float angle = 0.0f;
+    float angularVelocity = 0.0f;
+    glm::vec2 force = {0.0f, 0.0f};
+    float torque = 0.0f;
+};
 
 #endif //PHYSICS_ENGINE_RIGIDBODY_H

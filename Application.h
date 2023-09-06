@@ -37,11 +37,18 @@ public:
 private:
     void setupWindow();
 
-    void processInput(GLFWwindow* window);
 
     void onImGUIRender();
 
     void CreateLine(LineConfig config);
+
+
+
+public:
+    //Callbacks
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+    static void Application::mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 };
 
 

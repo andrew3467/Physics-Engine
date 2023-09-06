@@ -3,6 +3,8 @@
 //
 
 #include <glm/vec2.hpp>
+#include <iostream>
+#include <glm/gtx/string_cast.hpp>
 #include "BoxParticle.h"
 
 BoxParticle::BoxParticle(float w, float h, float m, RigidBody rb) : width(w), height(h), mass(m), rigidBody(rb) {

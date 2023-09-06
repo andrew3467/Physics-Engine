@@ -10,6 +10,7 @@
 #include "Primitives.h"
 #include <Shader.h>
 #include <memory>
+#include <glm/gtx/string_cast.hpp>
 #include "BoxParticle.h"
 
 
