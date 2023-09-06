@@ -12,6 +12,14 @@
 #include "ParticleDrawer.h"
 
 
+struct LineConfig{
+    int length = 1;
+    glm::ivec2 pos = {0, 0};
+    glm::vec2 velocity = {0.0f, 0.0f};
+    glm::vec2 acceleration = {0.0f, 0.0f};
+    bool isVertical = false;
+};
+
 class Application {
 private:
     GLFWwindow* m_Window;
@@ -19,6 +27,8 @@ private:
     const char* m_Title;
 
     std::unique_ptr<ParticleDrawer> particleDrawer;
+
+    LineConfig lineConfig;
 
 
 public:
@@ -32,6 +42,8 @@ private:
     void processInput(GLFWwindow* window);
 
     void onImGUIRender();
+
+    void CreateLine(LineConfig config);
 };
 
 

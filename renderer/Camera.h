@@ -13,7 +13,10 @@
 enum CameraMoveDir{
     Right = 0,
     Left = 1,
-    Back = 2
+    Back = 2,
+    Forward = 3,
+    Up = 4,
+    Down = 5
 };
 
 class Camera {

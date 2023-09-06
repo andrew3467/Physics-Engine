@@ -29,6 +29,7 @@ public:
     void createParticle();
 
     void drawParticles(glm::mat4 viewProj);
+    void update(float deltaTime);
 
 
     std::vector<Particle> particles() { return m_Particles;}

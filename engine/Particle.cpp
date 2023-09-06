@@ -13,3 +13,7 @@ Particle::Particle(glm::vec3 position, glm::vec3 velocity, glm::vec3 acceleratio
 {
 
 }
+
+void Particle::update() {
+    
+}

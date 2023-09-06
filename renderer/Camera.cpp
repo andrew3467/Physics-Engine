@@ -9,7 +9,7 @@ Camera::Camera(glm::vec3 pos, int windowWidth, int windowHeight) : windowWidth(w
 }
 
 void Camera::move(CameraMoveDir moveDir, float deltaTime) {
-    switch(moveDir){
+    switch(moveDir) {
         case Right:
             camPos += glm::normalize(glm::cross(camFront, camUp)) * camSpeed * deltaTime;
             break;
@@ -18,6 +18,15 @@ void Camera::move(CameraMoveDir moveDir, float deltaTime) {
             break;
         case Back:
             camPos -= camSpeed * camFront * deltaTime;
+            break;
+        case Forward:
+            camPos += camSpeed * camFront * deltaTime;
+            break;
+        case Up:
+            camPos += camSpeed * camUp * deltaTime;
+            break;
+        case Down:
+            camPos -= camSpeed * camUp * deltaTime;
             break;
     }
 }

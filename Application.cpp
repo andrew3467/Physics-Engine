@@ -97,6 +97,8 @@ void Application::Run() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
+        particleDrawer->update(deltaTime);
+
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -125,6 +127,17 @@ void Application::onImGUIRender() {
         particleDrawer->ImGuiConfigWindow();
     }
 
+    if(ImGui::CollapsingHeader("Particle Line")){
+        ImGui::SliderInt("Length", &lineConfig.length, 1, 50);
+        ImGui::SliderInt2("Position", &lineConfig.pos.x, -10, 10);
+        ImGui::SliderFloat2("Velocity", &lineConfig.velocity.x, -10, 10);
+        ImGui::SliderFloat2("Acceleration", &lineConfig.acceleration.x, -10, 10);
+        ImGui::Checkbox("Vertical", &lineConfig.isVertical);
+
+        if(ImGui::Button("Create Line")){
+            CreateLine(lineConfig);
+        }
+    }
 
 
 }
@@ -146,10 +159,34 @@ void Application::processInput(GLFWwindow* window) {
     }
 
     if (glfwGetKey(window, GLFW_KEY_S)){
+        camera->move(Down, deltaTime);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_W)){
+        camera->move(Up, deltaTime);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)){
         camera->move(Back, deltaTime);
     }
 
-    if (glfwGetKey(window, GLFW_KEY_SPACE)){
-        std::cout << glm::to_string(camera->position()) << "\n\n";
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)){
+        camera->move(Forward, deltaTime);
+    }
+}
+
+void Application::CreateLine(LineConfig config) {
+    for(int i = 0; i < config.length; i++){
+        glm::vec3 position = {i + config.pos.x, config.pos.y, 0.0f};;
+
+        if(config.isVertical){
+            position = {config.pos.x, i + config.pos.y, 0.0f};
+        }
+
+        particleDrawer->createParticle(
+                position,
+                glm::vec3(config.velocity, 0.0f),
+                {}
+                );
     }
 }

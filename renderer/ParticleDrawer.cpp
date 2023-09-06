@@ -3,6 +3,7 @@
 //
 
 #include <imgui.h>
+#include <glm/gtx/string_cast.hpp>
 #include "ParticleDrawer.h"
 #include "Primitives.h"
 
@@ -42,5 +43,12 @@ void ParticleDrawer::ImGuiConfigWindow() {
             ImGui::SliderFloat3("InitialVelocity", &m_Particles[i].InitialVelocity.x, -2.0f, 2.0f);
             ImGui::SliderFloat3("Acceleration", &m_Particles[i].Acceleration.x, -4.0f, 4.0f);
         }
+    }
+}
+
+void ParticleDrawer::update(float deltaTime) {
+    for(auto &particle : m_Particles){
+        particle.Position += particle.Velocity * deltaTime;
+        particle.Velocity *= particle.Acceleration;
     }
 }
