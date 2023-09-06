@@ -20,6 +20,11 @@ set(SOURCES
         renderer/Primitives.h
         renderer/Camera.cpp
         renderer/Camera.h
+        renderer/ParticleDrawer.h
+        engine/World.h
+        engine/BoxParticle.cpp
+        engine/BoxParticle.h
+        engine/RigidBody.h
 )
 
 set(IMGUI_LIBS
@@ -28,12 +33,8 @@ set(IMGUI_LIBS
         external/ImGui/imgui_impl_opengl3.cpp
         external/ImGui/imgui_impl_opengl3.h
         external/ImGui/imgui_impl_opengl3_loader.h
+        engine/World.cpp
         renderer/ParticleDrawer.cpp
-        renderer/ParticleDrawer.h
-        engine/World.h
-        engine/BoxParticle.cpp
-        engine/BoxParticle.h
-        engine/RigidBody.h
 )
 
 

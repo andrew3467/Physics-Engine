@@ -5,8 +5,7 @@
 #include <glm/vec2.hpp>
 #include "BoxParticle.h"
 
-BoxParticle::BoxParticle(float w, float h, float m) : width(w), height(h) {
-
+BoxParticle::BoxParticle(float w, float h, float m, RigidBody rb) : width(w), height(h), mass(m), rigidBody(rb) {
     calculateMomentOfInertia();
 }
 
@@ -19,6 +18,6 @@ void BoxParticle::calculateMomentOfInertia() {
 void BoxParticle::update(float deltaTime) {
     glm::vec2 force = {0, mass * -9.81};
     glm::vec2 acceleration(force.x / mass, force.y / mass);
-    velocity += acceleration * deltaTime;
-    position += velocity * deltaTime;
+    rigidBody.linearVelocity += acceleration * deltaTime;
+    rigidBody.position += rigidBody.linearVelocity * deltaTime;
 }

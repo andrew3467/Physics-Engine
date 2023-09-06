@@ -2,11 +2,10 @@
 // Created by apgra on 8/31/2023.
 //
 
-#include <glad/glad.h>
 #include "Application.h"
-#include "renderer/Shader.h"
-#include "Primitives.h"
 #include "BoxParticle.h"
+#include "World.h"
+#include "ParticleDrawer.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -53,7 +52,6 @@ void Application::Run() {
     Shader shader("../shaders/solid_unlit.vert", "../shaders/solid_unlit.frag");
 
     camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f), m_Width, m_Height);
-    particleDrawer = std::make_unique<ParticleDrawer>();
 
     //Setup IMGUI
     IMGUI_CHECKVERSION();
@@ -79,7 +77,7 @@ void Application::Run() {
 
 
         //Render scene
-        particleDrawer->drawParticles(camera->viewProjection());
+        ParticleDrawer::getInstance()->drawParticles(camera->viewProjection());
 
 
         //Draw ImGui Windows
@@ -97,8 +95,8 @@ void Application::Run() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+        World::getInstance()->update(deltaTime);
 
-        particleDrawer->update(deltaTime);
 
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -116,16 +114,24 @@ void Application::Run() {
 
 void Application::onImGUIRender() {
     if(ImGui::Button("Clear particles")){
-        particleDrawer->clear();
+        ParticleDrawer::getInstance()->clear();
     }
 
     if(ImGui::CollapsingHeader("Manual Particle Config")){
         ImGui::Indent();
         if (ImGui::Button("Create Particle")) {
-            particleDrawer->createParticle();
+            World::getInstance()->createBoxParticle();
         }
 
-        particleDrawer->ImGuiConfigWindow();
+
+        auto& boxParticles = World::getInstance()->GetBoxParticles();
+        for(int i = 0; i < boxParticles.size(); i++){
+            if(ImGui::CollapsingHeader(("Particle #" + std::to_string(i)).c_str())){
+                ImGui::Indent();
+                ImGui::SliderFloat2("position", &boxParticles[i].rigidBody.position.x, -10.0f, 10.0f);
+                ImGui::SliderFloat2("InitialVelocity", &boxParticles[i].rigidBody.linearVelocity.x, -2.0f, 2.0f);
+            }
+        }
     }
 
     if(ImGui::CollapsingHeader("Particle Line")){
@@ -183,7 +189,15 @@ void Application::CreateLine(LineConfig config) {
             position = {config.pos.x, i + config.pos.y};
         }
 
-        BoxParticle particle(1.0f, 1.0f, 1.0f);
-        particleDrawer->addParticle(particle);
+        RigidBody rb = {
+                position,
+                config.velocity,
+                0.0f,
+                0.0f,
+                glm::vec2(0.0f),
+                0.0f
+        };
+
+        World::getInstance()->createBoxParticle(1.0f, 1.0f, 1.0f, rb);
     }
 }

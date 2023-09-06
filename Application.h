@@ -5,11 +5,12 @@
 #ifndef PHYSICS_ENGINE_APPLICATION_H
 #define PHYSICS_ENGINE_APPLICATION_H
 
+#define GLFW_INCLUDE_NONE
+
 #include <glfw/glfw3.h>
 #include <memory>
 #include "Camera.h"
 #include "Shader.h"
-#include "ParticleDrawer.h"
 
 
 struct LineConfig{
@@ -24,8 +25,6 @@ private:
     GLFWwindow* m_Window;
     int m_Width, m_Height;
     const char* m_Title;
-
-    std::unique_ptr<ParticleDrawer> particleDrawer;
 
     LineConfig lineConfig;
 
