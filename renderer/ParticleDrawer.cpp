@@ -12,20 +12,20 @@ ParticleDrawer::ParticleDrawer() {
 }
 
 void ParticleDrawer::clear() {
-    m_Particles.clear();
+    m_BoxParticles.clear();
 }
 
-void ParticleDrawer::createParticle(glm::vec3 position, glm::vec3 velocity, glm::vec3 acceleration) {
-    m_Particles.emplace_back(position, velocity, acceleration);
+void ParticleDrawer::addParticle(BoxParticle p) {
+    m_BoxParticles.push_back(p);
 }
 
 void ParticleDrawer::createParticle() {
-    m_Particles.push_back(Particle());
+    m_BoxParticles.emplace_back(1, 1, 1);
 }
 
 void ParticleDrawer::drawParticles(glm::mat4 viewProj) {
-    for(auto p : m_Particles){
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), p.Position);
+    for(auto p : m_BoxParticles){
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), {p.position, 0.0f});
 
         m_Shader->bind();
         m_Shader->setMat4("mvp", viewProj * model);
@@ -36,19 +36,17 @@ void ParticleDrawer::drawParticles(glm::mat4 viewProj) {
 }
 
 void ParticleDrawer::ImGuiConfigWindow() {
-    for(int i = 0; i < m_Particles.size(); i++){
+    for(int i = 0; i < m_BoxParticles.size(); i++){
         if(ImGui::CollapsingHeader(("Particle #" + std::to_string(i)).c_str())){
             ImGui::Indent();
-            ImGui::SliderFloat3("Position", &m_Particles[i].Position.x, -10.0f, 10.0f);
-            ImGui::SliderFloat3("InitialVelocity", &m_Particles[i].InitialVelocity.x, -2.0f, 2.0f);
-            ImGui::SliderFloat3("Acceleration", &m_Particles[i].Acceleration.x, -4.0f, 4.0f);
+            ImGui::SliderFloat2("position", &m_BoxParticles[i].position.x, -10.0f, 10.0f);
+            ImGui::SliderFloat2("InitialVelocity", &m_BoxParticles[i].velocity.x, -2.0f, 2.0f);
         }
     }
 }
 
 void ParticleDrawer::update(float deltaTime) {
-    for(auto &particle : m_Particles){
-        particle.Position += particle.Velocity * deltaTime;
-        particle.Velocity *= particle.Acceleration;
+    for(auto &particle : m_BoxParticles){
+        particle.update(deltaTime);
     }
 }

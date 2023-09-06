@@ -30,8 +30,10 @@ set(IMGUI_LIBS
         external/ImGui/imgui_impl_opengl3_loader.h
         renderer/ParticleDrawer.cpp
         renderer/ParticleDrawer.h
-        engine/Particle.cpp
-        engine/Particle.h
+        engine/World.h
+        engine/BoxParticle.cpp
+        engine/BoxParticle.h
+        engine/RigidBody.h
 )
 
 

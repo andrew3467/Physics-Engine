@@ -6,6 +6,7 @@
 #include "Application.h"
 #include "renderer/Shader.h"
 #include "Primitives.h"
+#include "BoxParticle.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -129,9 +130,8 @@ void Application::onImGUIRender() {
 
     if(ImGui::CollapsingHeader("Particle Line")){
         ImGui::SliderInt("Length", &lineConfig.length, 1, 50);
-        ImGui::SliderInt2("Position", &lineConfig.pos.x, -10, 10);
-        ImGui::SliderFloat2("Velocity", &lineConfig.velocity.x, -10, 10);
-        ImGui::SliderFloat2("Acceleration", &lineConfig.acceleration.x, -10, 10);
+        ImGui::SliderInt2("position", &lineConfig.pos.x, -10, 10);
+        ImGui::SliderFloat2("velocity", &lineConfig.velocity.x, -10, 10);
         ImGui::Checkbox("Vertical", &lineConfig.isVertical);
 
         if(ImGui::Button("Create Line")){
@@ -176,17 +176,14 @@ void Application::processInput(GLFWwindow* window) {
 }
 
 void Application::CreateLine(LineConfig config) {
-    for(int i = 0; i < config.length; i++){
-        glm::vec3 position = {i + config.pos.x, config.pos.y, 0.0f};;
+    for(int i = -config.length / 2; i < config.length / 2; i++){
+        glm::vec2 position = {i + config.pos.x, config.pos.y};;
 
         if(config.isVertical){
-            position = {config.pos.x, i + config.pos.y, 0.0f};
+            position = {config.pos.x, i + config.pos.y};
         }
 
-        particleDrawer->createParticle(
-                position,
-                glm::vec3(config.velocity, 0.0f),
-                {}
-                );
+        BoxParticle particle(1.0f, 1.0f, 1.0f);
+        particleDrawer->addParticle(particle);
     }
 }

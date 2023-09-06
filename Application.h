@@ -16,7 +16,6 @@ struct LineConfig{
     int length = 1;
     glm::ivec2 pos = {0, 0};
     glm::vec2 velocity = {0.0f, 0.0f};
-    glm::vec2 acceleration = {0.0f, 0.0f};
     bool isVertical = false;
 };
 

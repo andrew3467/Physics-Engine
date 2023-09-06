@@ -9,14 +9,14 @@
 #include <glm/glm.hpp>
 #include <Shader.h>
 #include <memory>
-#include "Particle.h"
+#include "BoxParticle.h"
 
 
 class ParticleDrawer {
 private:
     std::unique_ptr<Shader> m_Shader;
 
-    std::vector<Particle> m_Particles;
+    std::vector<BoxParticle> m_BoxParticles;
 
 public:
     ParticleDrawer();
@@ -25,14 +25,14 @@ public:
 
     void ImGuiConfigWindow();
 
-    void createParticle(glm::vec3 position, glm::vec3 velocity, glm::vec3 acceleration);
+    void addParticle(BoxParticle p);
     void createParticle();
 
     void drawParticles(glm::mat4 viewProj);
     void update(float deltaTime);
 
 
-    std::vector<Particle> particles() { return m_Particles;}
+    std::vector<BoxParticle> particles() { return m_BoxParticles;}
 };
 
 
