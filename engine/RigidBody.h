@@ -10,6 +10,7 @@
 struct RigidBody {
     glm::vec2 position = {0.0f, 0.0f};
     glm::vec2 linearVelocity = {0.0f, 0.0f};
+    glm::vec2 linearAccceleration = {0.0f, 0.0f};
     float angle = 0.0f;
     float angularVelocity = 0.0f;
     glm::vec2 force = {0.0f, 0.0f};

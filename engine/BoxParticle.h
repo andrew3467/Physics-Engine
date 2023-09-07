@@ -13,7 +13,6 @@ private:
     float width;
     float height;
     float mass;
-    float momentOfInertia;
 
 public:
     RigidBody rigidBody;
@@ -27,7 +26,7 @@ public:
     void update(float deltaTime);
 
 private:
-    void calculateMomentOfInertia();
+    float calculateMomentOfInertia();
 };
 
 

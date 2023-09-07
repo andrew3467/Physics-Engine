@@ -10,7 +10,6 @@
 #include <glfw/glfw3.h>
 #include <memory>
 #include "Camera.h"
-#include "Shader.h"
 
 
 struct LineConfig{

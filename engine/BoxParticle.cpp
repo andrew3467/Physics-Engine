@@ -3,10 +3,11 @@
 //
 
 #include <glm/vec2.hpp>
-#include <iostream>
-#include <glm/gtx/string_cast.hpp>
 #include "BoxParticle.h"
-#include "../Application.h"
+
+
+#define GRAVITY -9.81
+
 
 BoxParticle::BoxParticle(float w, float h, float m, RigidBody rb) : width(w), height(h), mass(m), rigidBody(rb) {
     calculateMomentOfInertia();
@@ -14,19 +15,33 @@ BoxParticle::BoxParticle(float w, float h, float m, RigidBody rb) : width(w), he
 
 
 
-void BoxParticle::calculateMomentOfInertia() {
-    momentOfInertia = mass * (width * width - height * height) / 12;
+float BoxParticle::calculateMomentOfInertia() {
+    return mass * (width * width - height * height) / 12;
 }
 
 void BoxParticle::update(float deltaTime) {
-    if(!rigidBody.hasGravity){
-        return;
+    glm::vec2 force = {0, mass};
+    if(rigidBody.hasGravity){
+        force.y *= GRAVITY;
     }
 
-    glm::vec2 force = {0, mass * -9.81};
-    glm::vec2 acceleration(force.x / mass, force.y / mass);
-    rigidBody.linearVelocity += acceleration * deltaTime;
-    rigidBody.position += rigidBody.linearVelocity * deltaTime;
+
+    //Force
+    rigidBody.force = {0, 100};
+
+    //Torque
+    glm::vec2 r = {
+            width / 2,
+            height / 2
+    };
+    rigidBody.torque = r.x * rigidBody.force.y - r.y * rigidBody.force.x;
+
+    rigidBody.linearAccceleration = rigidBody.force / mass;
+    rigidBody.linearVelocity = rigidBody.linearAccceleration * deltaTime;
+    rigidBody.position = rigidBody.linearVelocity * deltaTime;
+    float angularAcceleration = rigidBody.torque / calculateMomentOfInertia();
+    rigidBody.angularVelocity += angularAcceleration * deltaTime;
+    rigidBody.angle += rigidBody.angularVelocity * deltaTime;
 }
 
 glm::vec2 BoxParticle::Size() {

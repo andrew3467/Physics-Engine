@@ -25,6 +25,11 @@ set(SOURCES
         engine/BoxParticle.cpp
         engine/BoxParticle.h
         engine/RigidBody.h
+        engine/World.cpp
+        renderer/ParticleDrawer.cpp
+        engine/Random.cpp
+        engine/Random.h
+        engine/Barrier.h
 )
 
 set(IMGUI_LIBS
@@ -33,10 +38,6 @@ set(IMGUI_LIBS
         external/ImGui/imgui_impl_opengl3.cpp
         external/ImGui/imgui_impl_opengl3.h
         external/ImGui/imgui_impl_opengl3_loader.h
-        engine/World.cpp
-        renderer/ParticleDrawer.cpp
-        engine/Random.cpp
-        engine/Random.h
 )
 
 

@@ -9,6 +9,7 @@
 #include <vector>
 #include "RigidBody.h"
 #include "ParticleDrawer.h"
+#include "Barrier.h"
 
 class World {
 protected:
@@ -37,10 +38,15 @@ public:
 
 private:
     std::vector<BoxParticle> m_BoxParticles;
+    std::vector<Barrier> m_Barriers;
 
 public:
     std::vector<BoxParticle>& GetBoxParticles(){
         return m_BoxParticles;
+    }
+
+    std::vector<Barrier>& GetBarriers(){
+        return m_Barriers;
     }
 
     void clearParticles(){
@@ -55,12 +61,17 @@ public:
         RigidBody rb = {
                 {0.0f, 0.0f},
                 {0.0f, 0.0f},
+                {0.0f, 0.0f},
                 0.0f,
                 0.0f,
                 {0.0f, 0.0f},
                 0.0f
         };
         m_BoxParticles.emplace_back(1, 1, 1, rb);
+    }
+
+    void createBarrier(glm::vec2 pos, glm::vec2 size){
+        m_Barriers.push_back({pos, size});
     }
 };
 

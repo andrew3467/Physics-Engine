@@ -5,7 +5,6 @@
 #include "Application.h"
 #include "BoxParticle.h"
 #include "World.h"
-#include "ParticleDrawer.h"
 #include "Random.h"
 
 #include <stdexcept>
@@ -63,8 +62,6 @@ void Application::setupWindow() {
 }
 
 void Application::Run() {
-    Shader shader("../shaders/solid_unlit.vert", "../shaders/solid_unlit.frag");
-
     camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f), WindowSize.x, WindowSize.y);
 
     //GLFW Callbacks
@@ -87,6 +84,12 @@ void Application::Run() {
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
+    //Create Barriers
+    World::getInstance()->createBarrier(
+            {0.0f, WindowSize.y / 2},
+            {WindowSize.x, 2.0f}
+            );
+
 
     glViewport(0, 0, WindowSize.x, WindowSize.y);
     while(!glfwWindowShouldClose(m_Window)){
@@ -99,6 +102,7 @@ void Application::Run() {
         World::getInstance()->update(deltaTime);
 
         //Render scene
+        ParticleDrawer::getInstance()->drawBarriers(camera->viewProjection(), World::getInstance()->GetBarriers());
         ParticleDrawer::getInstance()->drawParticles(camera->viewProjection(), World::getInstance()->GetBoxParticles());
 
 
@@ -202,6 +206,7 @@ void Application::CreateLine() {
                         particleConfig.velocity.x + (particleConfig.velocityVariation.x * (Random::Float() - 0.5f)),
                         particleConfig.velocity.y + (particleConfig.velocityVariation.y * (Random::Float() - 0.5f))
                 },
+                {0.0f, 0.0f},
                 0.0f,
                 0.0f,
                 glm::vec2(0.0f),
@@ -224,6 +229,7 @@ void Application::CreateGrid() {
                             particleConfig.velocity.x + (particleConfig.velocityVariation.x * (Random::Float() - 0.5f)),
                             particleConfig.velocity.y + (particleConfig.velocityVariation.y * (Random::Float() - 0.5f))
                     },
+                    {0.0f, 0.0f},
                     0.0f,
                     0.0f,
                     glm::vec2(0.0f),
