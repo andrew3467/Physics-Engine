@@ -35,6 +35,8 @@ set(IMGUI_LIBS
         external/ImGui/imgui_impl_opengl3_loader.h
         engine/World.cpp
         renderer/ParticleDrawer.cpp
+        engine/Random.cpp
+        engine/Random.h
 )
 
 

@@ -12,6 +12,7 @@
 #include <memory>
 #include <glm/gtx/string_cast.hpp>
 #include "BoxParticle.h"
+#include <World.h>
 
 
 class ParticleDrawer {
@@ -39,22 +40,12 @@ public:
 private:
     std::unique_ptr<Shader> m_Shader;
 
-    std::vector<RigidBody> m_Particles;
-
 public:
 
-
-    void clear() {
-        m_Particles.clear();
-    }
-
-    void addParticle(RigidBody p) {
-        m_Particles.push_back(p);
-    }
-
-    void drawParticles(glm::mat4 viewProj){
-        for(auto rb : m_Particles){
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), {rb.position, 0.0f});
+    void drawParticles(glm::mat4 viewProj, std::vector<BoxParticle> particles){
+        for(auto particle : particles){
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), {particle.rigidBody.position, 0.0f});
+            model = glm::scale(model, glm::vec3(particle.Size(), 1.0f));
 
             m_Shader->bind();
             m_Shader->setMat4("mvp", viewProj * model);
@@ -63,9 +54,6 @@ public:
             m_Shader->unbind();
         }
     }
-
-
-    std::vector<RigidBody> particlesRBs() { return m_Particles;}
 };
 
 

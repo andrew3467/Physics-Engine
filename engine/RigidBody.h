@@ -14,6 +14,7 @@ struct RigidBody {
     float angularVelocity = 0.0f;
     glm::vec2 force = {0.0f, 0.0f};
     float torque = 0.0f;
+    bool hasGravity = true;
 };
 
 #endif //PHYSICS_ENGINE_RIGIDBODY_H

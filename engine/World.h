@@ -30,7 +30,7 @@ public:
     }
 
     void update(float deltaTime){
-        for(auto particle : m_BoxParticles){
+        for(auto &particle : m_BoxParticles){
             particle.update(deltaTime);
         }
     }
@@ -43,12 +43,15 @@ public:
         return m_BoxParticles;
     }
 
-    void createBoxParticle(float w, float h, float m, RigidBody rb){
-        m_BoxParticles.emplace_back(w, h, m, rb);
-        ParticleDrawer::getInstance()->addParticle(rb);
+    void clearParticles(){
+        m_BoxParticles.clear();
     }
 
-    void createBoxParticle(){
+    void createBoxParticle(float w, float h, float m, RigidBody rb){
+        m_BoxParticles.emplace_back(w, h, m, rb);
+    }
+
+    void createBoxParticle() {
         RigidBody rb = {
                 {0.0f, 0.0f},
                 {0.0f, 0.0f},
@@ -58,7 +61,7 @@ public:
                 0.0f
         };
         m_BoxParticles.emplace_back(1, 1, 1, rb);
-        ParticleDrawer::getInstance()->addParticle(rb);    }
+    }
 };
 
 

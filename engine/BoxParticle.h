@@ -22,6 +22,8 @@ public:
 public:
     BoxParticle(float w, float h, float m, RigidBody rb);
 
+    glm::vec2 Size();
+
     void update(float deltaTime);
 
 private:

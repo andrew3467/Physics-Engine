@@ -6,6 +6,7 @@
 #include "BoxParticle.h"
 #include "World.h"
 #include "ParticleDrawer.h"
+#include "Random.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -23,7 +24,19 @@ float lastFrame = 0.0f;
 
 glm::vec3 color = glm::vec3(1.0f);
 
-Application::Application(const char *title, int width, int height) : m_Title(title), m_Width(width), m_Height(height) {
+//Toggles
+bool clickToPlaceParticle = false;
+
+
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void window_resize_callback(GLFWwindow* window, int width, int height);
+
+
+
+
+Application::Application(const char *title, int width, int height) : m_Title(title), WindowSize(width, height) {
     setupWindow();
 }
 
@@ -34,7 +47,8 @@ void Application::setupWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, nullptr, nullptr);
+    m_Window = glfwCreateWindow(WindowSize.x, WindowSize.y, m_Title, nullptr, nullptr);
+    glfwSetWindowUserPointer(m_Window, this);
 
     if(!m_Window){
         glfwTerminate();
@@ -51,11 +65,12 @@ void Application::setupWindow() {
 void Application::Run() {
     Shader shader("../shaders/solid_unlit.vert", "../shaders/solid_unlit.frag");
 
-    camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f), m_Width, m_Height);
+    camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f), WindowSize.x, WindowSize.y);
 
     //GLFW Callbacks
     glfwSetKeyCallback(m_Window, key_callback);
     glfwSetMouseButtonCallback(m_Window, mouse_button_callback);
+    glfwSetWindowSizeCallback(m_Window, window_resize_callback);
 
 
 
@@ -73,18 +88,18 @@ void Application::Run() {
     ImGui_ImplOpenGL3_Init(glsl_version);
 
 
-    glViewport(0, 0, m_Width, m_Height);
+    glViewport(0, 0, WindowSize.x, WindowSize.y);
     while(!glfwWindowShouldClose(m_Window)){
         glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-
+        processInput();
 
         //Update Particles
         World::getInstance()->update(deltaTime);
 
         //Render scene
-        ParticleDrawer::getInstance()->drawParticles(camera->viewProjection());
+        ParticleDrawer::getInstance()->drawParticles(camera->viewProjection(), World::getInstance()->GetBoxParticles());
 
 
         //Draw ImGui Windows
@@ -121,7 +136,17 @@ void Application::Run() {
 
 void Application::onImGUIRender() {
     if(ImGui::Button("Clear particles")){
-        ParticleDrawer::getInstance()->clear();
+        World::getInstance()->clearParticles();
+    }
+
+    ImGui::Checkbox("Click To Place", &clickToPlaceParticle);
+
+    if(ImGui::CollapsingHeader("Particle Configs")){
+        ImGui::Indent();
+        ImGui::Checkbox("Gravity", &particleConfig.hasGravity);
+        ImGui::SliderFloat2("Size", &particleConfig.size.x, 0.5f, 10);
+        ImGui::SliderFloat2("Velocity", &particleConfig.velocity.x, -10, 10);
+        ImGui::SliderFloat2("Velocity Variation", &particleConfig.velocityVariation.x, -2.0f, 2.0f);
     }
 
     if(ImGui::CollapsingHeader("Manual Particle Config")){
@@ -144,35 +169,76 @@ void Application::onImGUIRender() {
     if(ImGui::CollapsingHeader("Particle Line")){
         ImGui::SliderInt("Length", &lineConfig.length, 1, 50);
         ImGui::SliderInt2("position", &lineConfig.pos.x, -10, 10);
-        ImGui::SliderFloat2("velocity", &lineConfig.velocity.x, -10, 10);
         ImGui::Checkbox("Vertical", &lineConfig.isVertical);
 
+
         if(ImGui::Button("Create Line")){
-            CreateLine(lineConfig);
+            CreateLine();
+        }
+    }
+
+    if(ImGui::CollapsingHeader("Particle Grid")){
+        ImGui::SliderInt2("Size", &gridConfig.size.x, 1, 50);
+        ImGui::SliderInt2("Position", &lineConfig.pos.x, -10, 10);
+
+        if(ImGui::Button("Create Grid")){
+            CreateGrid();
         }
     }
 
 
 }
-void Application::CreateLine(LineConfig config) {
-    for(int i = -config.length / 2; i < config.length / 2; i++){
-        glm::vec2 position = {i + config.pos.x, config.pos.y};;
+void Application::CreateLine() {
+    for(int i = -lineConfig.length / 2; i < lineConfig.length / 2; i++){
+        glm::vec2 position = {(i + lineConfig.pos.x) * particleConfig.size.x, lineConfig.pos.y * particleConfig.size.y};
 
-        if(config.isVertical){
-            position = {config.pos.x, i + config.pos.y};
+        if(lineConfig.isVertical){
+            position = {lineConfig.pos.x, i + lineConfig.pos.y};
         }
 
         RigidBody rb = {
                 position,
-                config.velocity,
+                {
+                        particleConfig.velocity.x + (particleConfig.velocityVariation.x * (Random::Float() - 0.5f)),
+                        particleConfig.velocity.y + (particleConfig.velocityVariation.y * (Random::Float() - 0.5f))
+                },
                 0.0f,
                 0.0f,
                 glm::vec2(0.0f),
-                0.0f
+                0.0f,
+                particleConfig.hasGravity
         };
 
-        World::getInstance()->createBoxParticle(1.0f, 1.0f, 1.0f, rb);
+        World::getInstance()->createBoxParticle(particleConfig.size.x, particleConfig.size.y, 1.0f, rb);
     }
+}
+
+void Application::CreateGrid() {
+    for(int y = -gridConfig.size.y / 2; y < gridConfig.size.y / 2; y++) {
+        for (int x = -gridConfig.size.x / 2; x < gridConfig.size.x / 2; x++) {
+            glm::vec2 position = {(x + lineConfig.pos.x) * particleConfig.size.x, (y + lineConfig.pos.y) * particleConfig.size.y};
+
+            RigidBody rb = {
+                    position,
+                    {
+                            particleConfig.velocity.x + (particleConfig.velocityVariation.x * (Random::Float() - 0.5f)),
+                            particleConfig.velocity.y + (particleConfig.velocityVariation.y * (Random::Float() - 0.5f))
+                    },
+                    0.0f,
+                    0.0f,
+                    glm::vec2(0.0f),
+                    0.0f,
+                    particleConfig.hasGravity
+            };
+
+            World::getInstance()->createBoxParticle(particleConfig.size.x, particleConfig.size.y, 1.0f, rb);
+        }
+    }
+}
+
+void Application::updateWindowSize(int width, int height) {
+    WindowSize.x = width;
+    WindowSize.y = height;
 }
 
 glm::vec2 screenSpaceToWorldSpace(glm::vec2 screenCoords, glm::mat4 viewProj, glm::vec2 windowSize){
@@ -197,42 +263,44 @@ glm::vec2 screenSpaceToWorldSpace(glm::vec2 screenCoords, glm::mat4 viewProj, gl
 
 
 
-//Callbacks
-void Application::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-        glfwSetWindowShouldClose(window, true);
-    }
-
-    if (key == GLFW_KEY_A  && action == GLFW_PRESS){
+void Application::processInput(){
+    if (glfwGetKey(m_Window, GLFW_KEY_A)){
         color -= glm::vec3(1.0f, 1.0f, 0.0f);
         camera->move(Left, deltaTime);
     }
 
-    if (key == GLFW_KEY_D  && action == GLFW_PRESS){
+    if (glfwGetKey(m_Window, GLFW_KEY_D)){
         color += glm::vec3(1.0f, 0.0f, 1.0f);
         camera->move(Right, deltaTime);
     }
 
-    if (key == GLFW_KEY_S && action == GLFW_PRESS){
+    if (glfwGetKey(m_Window, GLFW_KEY_S)){
         camera->move(Down, deltaTime);
     }
 
-    if (key == GLFW_KEY_W  && action == GLFW_PRESS){
+    if (glfwGetKey(m_Window, GLFW_KEY_W)){
         camera->move(Up, deltaTime);
     }
 
-    if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS){
+    if (glfwGetKey(m_Window, GLFW_KEY_LEFT_CONTROL)){
         camera->move(Back, deltaTime);
     }
 
-    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS){
+    if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT)){
         camera->move(Forward, deltaTime);
+    }    
+}
+
+//Callbacks
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+        glfwSetWindowShouldClose(window, true);
     }
 }
 
-void Application::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    if(clickToPlaceParticle && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
         double xpos, ypos;
         //getting cursor position
@@ -245,4 +313,11 @@ void Application::mouse_button_callback(GLFWwindow* window, int button, int acti
 
         World::getInstance()->createBoxParticle(1, 1, 1, rb);
     }
+}
+
+void window_resize_callback(GLFWwindow* window, int width, int height){
+    Application* app = (Application*)(glfwGetWindowUserPointer(window));
+
+    glViewport(0, 0, width, height);
+    app->updateWindowSize(width, height);
 }
