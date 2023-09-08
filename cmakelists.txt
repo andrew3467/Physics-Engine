@@ -30,6 +30,7 @@ set(SOURCES
         engine/Random.cpp
         engine/Random.h
         engine/Barrier.h
+        engine/AABB.h
 )
 
 set(IMGUI_LIBS

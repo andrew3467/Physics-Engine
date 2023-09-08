@@ -26,7 +26,7 @@ struct GridConfig{
 struct ParticleConfig{
     glm::vec2 size = {1, 1};
     glm::vec2 velocity = {0.0f, 0.0f};
-    glm::vec2 velocityVariation = {0.0f, 0.0f};
+    glm::vec2 velocityVariation = {2.0f, 2.0f};
     bool hasGravity;
 };
 
