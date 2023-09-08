@@ -193,6 +193,9 @@ void Application::onImGUIRender() {
 
 }
 void Application::CreateLine() {
+    AABB aabb(-particleConfig.size / glm::vec2(2.0f), particleConfig.size / glm::vec2(2.0f));
+
+
     for(int i = -lineConfig.length / 2; i < lineConfig.length / 2; i++){
         glm::vec2 position = {(i + lineConfig.pos.x) * particleConfig.size.x, lineConfig.pos.y * particleConfig.size.y};
 
@@ -211,7 +214,8 @@ void Application::CreateLine() {
                 0.0f,
                 glm::vec2(0.0f),
                 0.0f,
-                particleConfig.hasGravity
+                particleConfig.hasGravity,
+                aabb
         };
 
         World::getInstance()->createBoxParticle(particleConfig.size.x, particleConfig.size.y, 1.0f, rb);
@@ -219,6 +223,9 @@ void Application::CreateLine() {
 }
 
 void Application::CreateGrid() {
+    AABB aabb(-particleConfig.size / glm::vec2(2.0f), particleConfig.size / glm::vec2(2.0f));
+
+
     for(int y = -gridConfig.size.y / 2; y < gridConfig.size.y / 2; y++) {
         for (int x = -gridConfig.size.x / 2; x < gridConfig.size.x / 2; x++) {
             glm::vec2 position = {(x + lineConfig.pos.x) * particleConfig.size.x, (y + lineConfig.pos.y) * particleConfig.size.y};
@@ -234,7 +241,8 @@ void Application::CreateGrid() {
                     0.0f,
                     glm::vec2(0.0f),
                     0.0f,
-                    particleConfig.hasGravity
+                    particleConfig.hasGravity,
+                    aabb
             };
 
             World::getInstance()->createBoxParticle(particleConfig.size.x, particleConfig.size.y, 1.0f, rb);

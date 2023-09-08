@@ -4,6 +4,7 @@
 
 #include <glm/vec2.hpp>
 #include "BoxParticle.h"
+#include "World.h"
 
 
 #define GRAVITY -9.81
@@ -36,6 +37,18 @@ void BoxParticle::update(float deltaTime) {
 
     rigidBody.linearAcceleration = rigidBody.force / mass;
     rigidBody.linearVelocity += rigidBody.linearAcceleration * deltaTime;
+
+    //Check for collision
+    //Loop over all other particles in scene
+    for(auto& other : World::getInstance()->GetBoxParticles()){
+        //Collision
+        //Temp invert velocity
+        if(AABB::TestOverlap(this->rigidBody.aabb, other.rigidBody.aabb)){
+            rigidBody.linearVelocity *= -1;
+        }
+    }
+
+
     rigidBody.position += rigidBody.linearVelocity * deltaTime;
     float angularAcceleration = rigidBody.torque / calculateMomentOfInertia();
     rigidBody.angularVelocity += angularAcceleration * deltaTime;

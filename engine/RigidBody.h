@@ -6,6 +6,7 @@
 #define PHYSICS_ENGINE_RIGIDBODY_H
 
 #include <glm/glm.hpp>
+#include "AABB.h"
 
 struct RigidBody {
     glm::vec2 position = {0.0f, 0.0f};
@@ -16,6 +17,8 @@ struct RigidBody {
     glm::vec2 force = {0.0f, 0.0f};
     float torque = 0.0f;
     bool hasGravity = true;
+
+    AABB aabb;
 };
 
 #endif //PHYSICS_ENGINE_RIGIDBODY_H
