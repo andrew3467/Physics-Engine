@@ -62,7 +62,7 @@ void Application::setupWindow() {
 }
 
 void Application::Run() {
-    camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 4.0f), WindowSize.x, WindowSize.y);
+    camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f), WindowSize.x, WindowSize.y);
 
     //GLFW Callbacks
     glfwSetKeyCallback(m_Window, key_callback);
@@ -164,8 +164,8 @@ void Application::onImGUIRender() {
         for(int i = 0; i < boxParticles.size(); i++){
             if(ImGui::CollapsingHeader(("Particle #" + std::to_string(i)).c_str())){
                 ImGui::Indent();
-                ImGui::SliderFloat2("position", &boxParticles[i].rigidBody.position.x, -10.0f, 10.0f);
-                ImGui::SliderFloat2("Velocity", &boxParticles[i].rigidBody.linearVelocity.x, -2.0f, 2.0f);
+                ImGui::SliderFloat2("position", &boxParticles[i].rigidBody->position.x, -10.0f, 10.0f);
+                ImGui::SliderFloat2("Velocity", &boxParticles[i].rigidBody->velocity.x, -2.0f, 2.0f);
             }
         }
     }
@@ -203,22 +203,7 @@ void Application::CreateLine() {
             position = {lineConfig.pos.x, i + lineConfig.pos.y};
         }
 
-        RigidBody rb = {
-                position,
-                {
-                        particleConfig.velocity.x + (particleConfig.velocityVariation.x * (Random::Float() - 0.5f)),
-                        particleConfig.velocity.y + (particleConfig.velocityVariation.y * (Random::Float() - 0.5f))
-                },
-                {0.0f, 0.0f},
-                0.0f,
-                0.0f,
-                glm::vec2(0.0f),
-                0.0f,
-                particleConfig.hasGravity,
-                aabb
-        };
-
-        World::getInstance()->createBoxParticle(particleConfig.size.x, particleConfig.size.y, 1.0f, rb);
+        World::getInstance()->createBoxParticle(1.0f, particleConfig.size, position, glm::vec2(0.0f));
     }
 }
 
@@ -230,22 +215,7 @@ void Application::CreateGrid() {
         for (int x = -gridConfig.size.x / 2; x < gridConfig.size.x / 2; x++) {
             glm::vec2 position = {(x + lineConfig.pos.x) * particleConfig.size.x, (y + lineConfig.pos.y) * particleConfig.size.y};
 
-            RigidBody rb = {
-                    position,
-                    {
-                            particleConfig.velocity.x + (particleConfig.velocityVariation.x * (Random::Float() - 0.5f)),
-                            particleConfig.velocity.y + (particleConfig.velocityVariation.y * (Random::Float() - 0.5f))
-                    },
-                    {0.0f, 0.0f},
-                    0.0f,
-                    0.0f,
-                    glm::vec2(0.0f),
-                    0.0f,
-                    particleConfig.hasGravity,
-                    aabb
-            };
-
-            World::getInstance()->createBoxParticle(particleConfig.size.x, particleConfig.size.y, 1.0f, rb);
+            World::getInstance()->createBoxParticle(1.0f, particleConfig.size, position, glm::vec2(0.0f));
         }
     }
 }
@@ -321,11 +291,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         glfwGetCursorPos(window, &xpos, &ypos);
         glm::vec2 worldCoord = screenSpaceToWorldSpace({xpos, ypos}, camera->viewProjection(), {1280, 720});
 
-        RigidBody rb;
-        rb.position.x = worldCoord.x;
-        rb.position.y = worldCoord.y;
-
-        World::getInstance()->createBoxParticle(1, 1, 1, rb);
+        World::getInstance()->createBoxParticle(1.0f, glm::vec2(1.0f), worldCoord, glm::vec2(0.0f));
     }
 }
 

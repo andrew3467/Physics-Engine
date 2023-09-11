@@ -10,23 +10,19 @@
 
 class BoxParticle {
 private:
-    float width;
-    float height;
-    float mass;
 
 public:
-    RigidBody rigidBody;
+    RigidBody *rigidBody;
 
 
 public:
-    BoxParticle(float w, float h, float m, RigidBody rb);
-
-    glm::vec2 Size();
+    BoxParticle(float mass, glm::vec2 size, glm::vec2 pos, glm::vec2 rot);
+    BoxParticle();
 
     void update(float deltaTime);
 
 private:
-    float calculateMomentOfInertia();
+
 };
 
 

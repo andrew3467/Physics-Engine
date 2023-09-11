@@ -42,20 +42,18 @@ private:
 
 public:
 
-    void drawParticles(glm::mat4 viewProj, std::vector<BoxParticle> particles){
+    void drawParticles(glm::mat4 viewProj, const std::vector<BoxParticle>& particles){
         for(auto particle : particles){
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), {particle.rigidBody.position, 0.0f});
-            model = glm::scale(model, glm::vec3(particle.Size(), 1.0f));
 
             particleShader->bind();
-            particleShader->setMat4("mvp", viewProj * model);
+            particleShader->setMat4("mvp", viewProj * particle.rigidBody->model);
             particleShader->setVec3("color", 1.0f);
             DrawSquare();
             particleShader->unbind();
         }
     }
 
-    void drawBarriers(glm::mat4 viewProj, std::vector<Barrier> barriers){
+    void drawBarriers(glm::mat4 viewProj, const std::vector<Barrier>& barriers){
         for(auto& barrier : barriers) {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), {barrier.Position, 0.0f});
             model = glm::scale(model, glm::vec3(barrier.Size, 1.0f));

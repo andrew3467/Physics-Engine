@@ -31,6 +31,7 @@ set(SOURCES
         engine/Random.h
         engine/Barrier.h
         engine/AABB.h
+        engine/RigidBody.cpp
 )
 
 set(IMGUI_LIBS

@@ -53,21 +53,12 @@ public:
         m_BoxParticles.clear();
     }
 
-    void createBoxParticle(float w, float h, float m, RigidBody rb){
-        m_BoxParticles.emplace_back(w, h, m, rb);
+    void createBoxParticle(float mass, glm::vec2 size, glm::vec2 pos, glm::vec2 rot) {
+        m_BoxParticles.emplace_back(mass, size, pos, rot);
     }
 
-    void createBoxParticle() {
-        RigidBody rb = {
-                {0.0f, 0.0f},
-                {0.0f, 0.0f},
-                {0.0f, 0.0f},
-                0.0f,
-                0.0f,
-                {0.0f, 0.0f},
-                0.0f
-        };
-        m_BoxParticles.emplace_back(1, 1, 1, rb);
+    void createBoxParticle(){
+        m_BoxParticles.emplace_back();
     }
 
     void createBarrier(glm::vec2 pos, glm::vec2 size){
